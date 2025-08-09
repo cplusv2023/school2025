@@ -1,0 +1,170 @@
+\title{Madagascar tutorial: Writing technical papers by using Madagascar and LaTeX}
+
+\author{Maurice the Aye-Aye\footnotemark[1]}
+
+\address{
+\footnotemark[1] King Julien's Royal Advisor, \\
+Island of Madagascar, \\ Africa}
+
+\lefthead{Aye-Aye}
+\righthead{Tutorial}
+\footer{Madagascar Documentation}
+
+\maketitle
+
+\begin{abstract}
+From the viewpoint of science, all technical papers should be
+"reproducible" in the sense that someone of reasonable skill ought to
+be able to read the paper and then reproduce the results (from Joe
+Dellinger). \texttt{SEGTeX} is a \LaTeX\ package for geophysical
+publications, which is a important component in \textsc{Madagascar}
+Project. \texttt{SEGTeX} consists of class files for Geophysics
+papers, SEG expanded abstracts, etc, and cumulative bibliography of
+geophysical publications. In this tutorial, you will dive into writing
+part in the \textsc{Madagascar} architecture \cite[]{m8r} and learn
+how to use the \textsc{Madagascar} and \texttt{SEGTeX} to write a
+reproducible paper. By the end of this tutorial, you should have
+learned to: 
+\begin{enumerate} 
+\item design a paper project by following \texttt{SEGTeX} rules,
+\item insert figures from \textsc{Madagascar} workflow into papers, 
+\item generate a PDF paper with several styles by using different 
+\texttt{SEGTeX} classes,
+\item revise a paper with notated signs.  
+\end{enumerate}
+\end{abstract}
+
+\section{Prerequisites}
+
+Completing this tutorial requires
+\begin{itemize}
+\item \textsc{Madagascar} software environment available from \\
+\url{http://www.ahay.org}
+\item \LaTeX\ environment with \texttt{SEGTeX} available from \\ 
+\url{http://www.ahay.org/wiki/SEGTeX}
+\end{itemize}
+To do the assignment on your personal computer, you need to install
+the required environments. An Internet connection is required for
+access to the data repository.
+
+The tutorial itself is available from the \textsc{Madagascar} repository
+by running
+\begin{verbatim}
+svn co https://github.com/ahay/src/trunk/book/rsf/school2025 ~/school2025
+\end{verbatim}
+
+\section{Introduction}
+
+In this tutorial, you will be asked to run commands from the Unix
+shell (identified by \texttt{bash\$}) and to edit files in a text
+editor. Different editors are available in a typical Unix environment
+(\texttt{vi}, \texttt{emacs}, \texttt{nedit}, etc.)
+
+Your first assignment:
+\begin{enumerate}
+\item Open a Unix shell.
+\item Change directory to the tutorial directory
+\begin{verbatim}
+bash$ cd ~/school2025
+\end{verbatim}
+\item Open the \texttt{school2025.tex} file in your favorite editor,
+  for example by running
+\begin{verbatim}
+bash$ emacs school2025.tex & 
+\end{verbatim}
+\item Look at the first line in the file and change the author name
+  from Maurice the Aye-Aye to your name (first things first).
+\end{enumerate}
+
+\section{Examples}
+\subsection{Basic commands}
+\begin{enumerate}
+\item Change directory to \texttt{plots} directory
+\begin{verbatim}
+bash$ cd plots
+\end{verbatim}
+\item Run
+\begin{verbatim}
+bash$ scons model.view
+\end{verbatim}
+
+in the Unix shell. A number of commands will appear in the shell
+followed by Figure~\ref{fig:model} appearing on your screen.
+\item To understand the commands, examine the script that generated them by 
+opening the \texttt{SConstruct} file in a text editor. Notice that,
+instead of Shell commands, the script contains rules.
+\begin{itemize}
+\item The first rule, \texttt{Fetch}, allows the script to download the 
+input data file \texttt{plots.asc} from the data server.
+\item Other rules have the form \texttt{Flow(target,source,command)} for
+generating data files or \texttt{Plot} and \texttt{Result} for
+generating picture files.
+\item \texttt{Fetch}, \texttt{Flow}, \texttt{Plot}, and \texttt{Result} 
+are defined in \textsc{Madagascar}'s \texttt{rsf.proj} package, which
+extends the functionality of \href{http://www.scons.org}{SCons} .
+\end{itemize}
+\item To better understand how rules translate into commands, run 
+\begin{verbatim}
+bash$ scons -c model.rsf
+\end{verbatim}
+The \texttt{-c} flag tells scons to remove the \texttt{model.rsf} file
+and all its dependencies.
+\item Next, run
+\begin{verbatim}
+bash$ scons -n model.rsf
+\end{verbatim}
+The \texttt{-n} flag tells scons not to run the command but simply to
+display it on the screen. Identify the lines in
+the \texttt{SConstruct} file that generate the output you see on the
+screen.
+\item Run
+\begin{verbatim}
+bash$ scons model.rsf
+\end{verbatim}
+  Examine the file \texttt{model.rsf} both by opening it in a text
+  editor and by running
+\begin{verbatim}
+bash$ sfin model.rsf
+\end{verbatim}
+
+  When you view model.rsf in the text editor, you see a history of all
+  the programs used to create the file. The \texttt{sfin} program
+  lists basic information about the file including data dimensions and
+  extents of each axis.
+\end{enumerate}
+
+\inputdir{plots}
+\plot{model}{width=0.75\textwidth}{Sigmoid model.}
+
+
+\subsection{Plot modules}
+Madagascar has provided various modules for data visualization, including \texttt{sfgraph, sfwiggle, sfgrey, sfgrey3}. The previous run
+\begin{verbatim}
+bash$ scons model.view
+\end{verbatim}
+renders a greyscale image with \texttt{sfgrey} and displays it on your screen. You can run the following to try \texttt{sfgraph, sfwiggle, sfgrey3}, respectively:
+\begin{verbatim}
+bash$ scons sin1.view
+bash$ scons modelw.view
+bash$ scons ltft.view
+\end{verbatim}
+Examine the srcipt by opening the \texttt{SConstruct} file and see how this works.
+
+You can also use \texttt{SConstruct} file to configure other command-line tools for your custom programs, such as Python, Matlab, GNU Octave, GMT, etc.. Type and run
+
+\begin{verbatim}
+bash$ scons view
+\end{verbatim}
+to generate these figures one by one.
+
+\subsection{Static figures}
+Your can put static figures (\ref{fig:fig1}) in the \texttt{Fig} directory and insert them by \texttt{\textbackslash inputdir\{.}\} and \texttt{\textbackslash plot\{fig1\}\{width=0.75\textbackslash textwidth\}\{Figure name.\}}.
+
+\inputdir{.}
+\plot{fig1}{width=0.75\textwidth}{Static figure.}
+
+\section{Revision}
+You can use \textbackslash new and \textbackslash old commands to mark the changes in the revised version. For example, the revised text is \new{revised text} and the replaced text is \old{replaced text}. 
+
+\bibliographystyle{seg}
+\bibliography{school2025}
