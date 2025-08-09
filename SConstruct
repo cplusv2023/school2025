@@ -19,6 +19,5 @@ Paper('school2025_tgrs','school2025_tgrs',
       include=r'''\hyphenation{op-tical net-works semi-conduc-tor IEEE-Xplore}
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}''')
-a,b=1,2
-f'{a} {b}'
+
 End()
