@@ -98,8 +98,8 @@ Result('pygrey3',['ltft', grey3script],
 # Plot using matlab/octave script (grey-scale)
 matlab = WhereIs('matlab')
 octave = WhereIs('octave')
-matscript = '../src/matwiggle.m'
-funcname = 'matwiggle'
+matscript = '../src/matgrey.m'
+funcname = 'matgrey'
 
 if matlab:
     Result('matgrey',['model', matscript],
@@ -114,11 +114,28 @@ if octave:
         '''%(octave, funcname), suffix='.pdf', stdin=0, stdout=-1)
 
 # Try GMT
-gmtscript1 = '../src/gmt-1.sh'
-gmtscript2 = '../src/gmt-2.sh'
-Result('gmt1', gmtscript1,'bash ${SOURCES[0]} ${TARGETS[0]}', suffix='.pdf', stdin=0, stdout=-1)
-Result('gmt2', gmtscript2,'bash ${SOURCES[0]} ${TARGETS[0]}', suffix='.pdf', stdin=0, stdout=-1)
+gmt = WhereIs('gmt')
+if gmt:
+       gmtscript1 = '../src/gmt-1.sh'
+       gmtscript2 = '../src/gmt-2.sh'
+       Result('gmt1', gmtscript1,'bash ${SOURCES[0]} ${TARGETS[0]}', suffix='.pdf', stdin=0, stdout=-1)
+       Result('gmt2', gmtscript2,'bash ${SOURCES[0]} ${TARGETS[0]}', suffix='.pdf', stdin=0, stdout=-1)
 
+       # GMT Wiggle
+
+       ## Need T-X Grid
+       Flow('model1','model','put n1=40000 n2=1')
+       Flow('tgrid','model','math output="x1" | put n1=40000 n2=1')
+       Flow('xgrid','model','math output="x2"  | put n1=40000 n2=1')
+       Flow('gmtmodel','tgrid xgrid model1',
+       '''
+       cat ${SOURCES[1:3]} axis=2 | 
+       rsf2txt tfile=${TARGETS[0]}  
+       ''', stdout=0)
+       Result('gmt3', ['gmtmodel'],
+              '''
+              gmt wiggle -R0/0.8/0/1.6 -JX5i/5i -BWSne+t"Sigmoid Model" -B -Z0.1i  -Gred+p -Gblue+n -Wdefault -gy0.001 -By+l"Distance (km)" -Bx+l"Time (s)" -pdf Fig/gmt3  
+              ''', suffix='.pdf',  stdout=-1, rsfflow=0)
 
 # Try fetch
 Fetch('Txx.HH','septour') 
@@ -131,20 +148,5 @@ plotpar = \
 for plot in ('wiggle','contour','grey'): 
     Result(plot,'windowed',plot + plotpar) 
 
-# GMT Wiggle
-
-## Need T-X Grid
-Flow('model1','model','put n1=40000 n2=1')
-Flow('tgrid','model','math output="x1" | put n1=40000 n2=1')
-Flow('xgrid','model','math output="x2"  | put n1=40000 n2=1')
-Flow('gmtmodel','tgrid xgrid model1',
-     '''
-      cat ${SOURCES[1:3]} axis=2 | 
-      rsf2txt tfile=${TARGETS[0]}  
-     ''', stdout=0)
-Result('gmt3', ['gmtmodel'],
-       '''
-        gmt wiggle -R0/0.8/0/1.6 -JX5i/5i -BWSne+t"Sigmoid Model" -B -Z0.1i  -Gred+p -Gblue+n -Wdefault -gy0.001 -By+l"Distance (km)" -Bx+l"Time (s)" -pdf Fig/gmt3  
-       ''', suffix='.pdf',  stdout=-1, rsfflow=0)
 
 End()
