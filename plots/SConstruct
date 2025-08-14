@@ -124,14 +124,10 @@ if gmt:
        # GMT Wiggle
 
        ## Need T-X Grid
-       Flow('model1','model','put n1=40000 n2=1')
-       Flow('tgrid','model','math output="x1" | put n1=40000 n2=1')
-       Flow('xgrid','model','math output="x2"  | put n1=40000 n2=1')
-       Flow('gmtmodel','tgrid xgrid model1',
-       '''
-       cat ${SOURCES[1:3]} axis=2 | 
-       rsf2txt tfile=${TARGETS[0]}  
-       ''', stdout=0)
+       Flow('model1','model','dd form=ascii line=1 --out=${TARGETS[0]}', stdout=0)
+       Flow('tgrid','model','math output="x1" | dd form=ascii line=1 --out=${TARGETS[0]}', stdout=0)
+       Flow('xgrid','model','math output="x2" | dd form=ascii line=1 --out=${TARGETS[0]}', stdout=0)
+       Flow('gmtmodel','tgrid xgrid model1', ' paste ${SOURCES[0:3]} ')
        Result('gmt3', ['gmtmodel'],
               '''
               gmt wiggle -R0/0.8/0/1.6 -JX5i/5i -BWSne+t"Sigmoid Model" -B -Z0.1i  -Gred+p -Gblue+n -Wdefault -gy0.001 -By+l"Distance (km)" -Bx+l"Time (s)" -pdf Fig/gmt3  
