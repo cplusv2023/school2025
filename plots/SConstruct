@@ -98,8 +98,8 @@ Result('pygrey3',['ltft', grey3script],
 # Plot using matlab/octave script (grey-scale)
 matlab = WhereIs('matlab')
 octave = WhereIs('octave')
-matscript = '../src/matgrey.m'
-funcname = 'matgrey'
+matscript = '../src/matgrey1.m'
+funcname = 'matgrey1'
 
 if matlab:
     Result('matgrey',['model', matscript],
