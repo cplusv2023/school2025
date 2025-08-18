@@ -48,7 +48,7 @@ Result('ltft','ltft',
        '''
         byte bar=bar.rsf allpos=y clip=2e-4 |
         grey3 title="Time-Frequency Spectra" color=j 
-        frame1=100 frame2=25 frame3=100 flat=n 
+        frame1=100 frame2=25 frame3=100 flat=n
         bar=bar.rsf scalebar=y
        ''')
 
